@@ -19,14 +19,57 @@
                 <label for="txtPassword" class="form-label">Password</label>
                 <input id="txtPassword" type="password" placeholder="Password" class="form-control">
                 <button id="btnSubmit" type="button" class="btn btn-primary col-12 mt-2">Submit</button>
+                <button id="btnClear" type="button" class="btn btn-secondary col-12 mt-2">Clear</button>
+
             </form>
         </div>
     </div>
     <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
         $('#btnSubmit').on('click',function(){
-            console.log('Hello Davis')
+            let strFirstName = $('#txtFirstName').val()
+            let strLastName = $('#txtLastName').val()
+            let strEmail = $('#txtEmail').val()
+            let strPassword = $('#txtPassword').val()
+
+            let blnError = false
+            let strErrorMessage = ''
+            if(strFirstName.length < 1){
+                blnError = true;
+                strErrorMessage = strErrorMessage + 'First name cannot be blank.  '
+            }
+            if(strLastName.length < 1){
+                blnError = true;
+                strErrorMessage = strErrorMessage + 'Last name cannot be blank.  '
+            }
+            if(strEmail.length < 1){
+                blnError = true;
+                strErrorMessage = strErrorMessage + 'Email cannot be blank.  '
+            }
+            if(strPassword.length < 1){
+                blnError = true;
+                strErrorMessage = strErrorMessage + 'Password cannot be blank.  '
+            }
+            if(blnError == true){
+                Swal.fire({
+                    title: "Oops!",
+                    text: strErrorMessage,
+                    icon: "error"
+                });
+                console.log(strErrorMessage)
+            }
+            else{
+                console.log('No errors found.')
+            }
+            console.log('Hello ' + strFirstName)
+        })
+        $('#btnClear').on('click',function(){
+            $('#txtFirstName').val('')
+            $('#txtLastName').val('')
+            $('#txtEmail').val('')
+            $('#txtPassword').val('')
         })
     </script>
 </body>
