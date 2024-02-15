@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Orders</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootswatch@4.5.2/dist/lux/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="bg-dark">
+    <div id="divMain" class="col-12 vh-100 d-flex justify-content-center align-items-center">
+        <div class="card col-12 col-lg-9">
+            <div class="card-header">
+                <h3>Customer Info</h3>
+            </div>
+            <div class="card-body">
+                <form>
+                    <label for="txtFirstName" class="form-label">First Name</label>
+                        <input id="txtFirstName" placeholder="First Name" aria-label="First Name" class="form-control">
+                    <label for="txtLastName" class="form-label">Last Name</label>
+                        <input id="txtLastName" type="text" placeholder="Last Name" class="form-control">
+                    <label for="txtEmail" class="form-label">Email</label>
+                        <input id="txtEmail" type="email" placeholder="Email" class="form-control">
+                    <label for="txtShipping" class="form-label">Shipping Address</label>
+                        <input id="txtShipping" type="address" placeholder="Billing Address" class="form-control">
+                    <label for="txtBilling" class="form-label">Billing Address</label>
+                        <input id="txtBilling" type="address" placeholder="Billing Address" class="form-control">
+                    <label for="txtPhone" class="form-label">Phone Number</label>
+                        <input id="txtPhone" type="phone" placeholder="Phone Number" class="form-control">
+                    <label for="cboTops" class="form-label">Clothing Top Preference</label>
+                        <select class="form-control" id="cboTops">
+                            <option disabled selected></option>
+                        </select>
+                    <label for="cboBottoms" class="form-label">Clothing Bottom Preference</label>
+                        <select class="form-control" id="cboBottoms">
+                            <option disabled selected></option>
+                        </select>
+                    <label for="cboShoes" class="form-label">Shoe Preference</label>
+                        <select class="form-control" id="cboShoes">
+                            <option disabled selected></option>
+                        </select>
+                    <button id="btnOrder" type="button" class="btn btn-primary col-12 mt-2">Order!</button>
+                    <button id="btnClear" type="button" class="btn btn-secondary col-12 mt-2">Clear</button>
+                </form>
+                <div id="divOrders">
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+
+        var intSearched = 0
+
+        $.getJSON('https://www.swollenhippo.com/getTopsByAPIKey.php?APIKey=Mickey2024!',function(result){
+                arrTops = result
+                arrTops.forEach(function(top){
+                    console.log(top.Description);
+                    let strHTML = '<option value="' + top.Description + '">' + top.Description + '</option>'
+                    $('#cboTops').append(strHTML)
+                });
+            })
+
+        $.getJSON('https://www.swollenhippo.com/getBottomsByAPIKey.php?APIKey=Mickey2024!',function(result){
+                arrBottoms = result
+                arrBottoms.forEach(function(bottom){
+                    console.log(bottom.Description);
+                    let strHTML = '<option value="' + bottom.Description + '">' + bottom.Description + '</option>'
+                    $('#cboBottoms').append(strHTML)
+                });
+            })
+
+        $.getJSON('https://www.swollenhippo.com/getShoesByAPIKey.php?APIKey=Mickey2024!',function(result){
+                arrShoes = result
+                arrShoes.forEach(function(shoes){
+                    console.log(shoes.Description);
+                    let strHTML = '<option value="' + shoes.Description + '">' + shoes.Description + '</option>'
+                    $('#cboShoes').append(strHTML)
+                });
+            })
+
+        $('#btnOrder').on('click',function(){
+            let strFirstName = $('#txtFirstName').val()
+            let strLastName = $('#txtLastName').val()
+            let strEmail = $('#txtEmail').val()
+            let strShipping = $('#txtShipping').val()
+            let strBilling = $('#txtBilling').val()
+            let strPhone = $('#txtPhone').val()
+            let strTop = $('#cboTops').val()
+            let strBottom = $('#cboBottoms').val()
+            let strShoes = $('#cboShoes').val()
+
+            let blnError = false
+            let strErrorMessage = ''
+            if(strFirstName.length < 1){
+                blnError = true;
+                strErrorMessage = strErrorMessage + 'First name cannot be blank.\n'
+            }
+            if(strLastName.length < 1){
+                blnError = true;
+                strErrorMessage = strErrorMessage + 'Last name cannot be blank.\n'
+            }
+            if(strEmail.length < 1){
+                blnError = true;
+                strErrorMessage = strErrorMessage + 'Email cannot be blank.\n'
+            }
+            if(strShipping.length < 1){
+                blnError = true;
+                strErrorMessage = strErrorMessage + 'Shipping Address cannot be blank.\n'
+            }
+            if(strBilling.length < 1){
+                blnError = true;
+                strErrorMessage = strErrorMessage + 'Billing Address cannot be blank.\n'
+            }
+            if(strPhone.length < 1){
+                blnError = true;
+                strErrorMessage = strErrorMessage + 'Phone number cannot be blank.\n'
+            }
+            if(strTop == null){
+                blnError = true;
+                strErrorMessage = strErrorMessage + 'You must select a top.\n'
+            }
+            if(strBottom == null){
+                blnError = true;
+                strErrorMessage = strErrorMessage + 'You must select a bottom.\n'
+            }
+            if(strShoes == null){
+                blnError = true;
+                strErrorMessage = strErrorMessage + 'You must select a shoe.\n'
+            }
+            if(blnError == true){
+                Swal.fire({
+                    title: "Oops!",
+                    text: strErrorMessage,
+                    icon: "error"
+                });
+                console.log(strErrorMessage)
+            } else{
+                console.log('No errors found.')
+                let strHTML = '<div id="div' + intSearched + '" class="card"><div class="card-header"><h3>Order For ' + strFirstName + ' ' + strLastName +'</h3></div><div class="card-body"><h2 class="text-center col-12">' + 'Order contents' + '</h2><h3 class="text-center col-12">' + strTop + '</h3><h3 class="text-center col-12">' + strBottom + '</h3><h3 class="text-center col-12">' + strShoes + '</h3><button id="btnReset" type="button" class="col-12 btn btn-danger">Reset</button></div></div>'
+                $('#divOrders').append(strHTML);
+                $('#divMain').removeClass('align-items-center').addClass('mt-5')
+                intSearched += 1
+                    if(intSearched >= 1){
+                        $('#divMain').removeClass('vh-100')
+                    }
+                }
+        })
+
+        $(document).on('click','#btnReset',function(){
+            $(this).parent().parent().remove()
+        });
+
+        $('#btnClear').on('click',function(){
+            $('#txtFirstName').val('')
+            $('#txtLastName').val('')
+            $('#txtEmail').val('')
+            $('#txtShipping').val('')
+            $('#txtBilling').val('')
+            $('#txtPhone').val('')
+            $('#cboTops').val('')
+            $('#cboBottoms').val('')
+            $('#cboShoes').val('')
+        })
+
+    </script>
+</body>
+</html>
