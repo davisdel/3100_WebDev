@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Orders</title>
+<!-- Included bootstrap theme "lux" here -->
     <link href="https://cdn.jsdelivr.net/npm/bootswatch@4.5.2/dist/lux/bootstrap.min.css" rel="stylesheet">
 </head>
 <body class="bg-dark">
@@ -13,9 +14,10 @@
                 <h3>Customer Info</h3>
             </div>
             <div class="card-body">
+<!-- All forms labeled, buttons are labeled using aria-labels -->
                 <form>
                     <label for="txtFirstName" class="form-label">First Name</label>
-                        <input id="txtFirstName" placeholder="First Name" aria-label="First Name" class="form-control">
+                        <input id="txtFirstName" placeholder="First Name" class="form-control">
                     <label for="txtLastName" class="form-label">Last Name</label>
                         <input id="txtLastName" type="text" placeholder="Last Name" class="form-control">
                     <label for="txtEmail" class="form-label">Email</label>
@@ -38,8 +40,8 @@
                         <select class="form-control" id="cboShoes">
                             <option disabled selected></option>
                         </select>
-                    <button id="btnOrder" type="button" class="btn btn-primary col-12 mt-2">Order!</button>
-                    <button id="btnClear" type="button" class="btn btn-secondary col-12 mt-2">Clear</button>
+                    <button id="btnOrder" type="button" class="btn btn-primary col-12 mt-2" aria-label="Order Button">Order!</button>
+                    <button id="btnClear" type="button" class="btn btn-secondary col-12 mt-2" aria-label="Reset Button">Clear</button>
                 </form>
                 <div id="divOrders">
 
@@ -57,8 +59,7 @@
         $.getJSON('https://www.swollenhippo.com/getTopsByAPIKey.php?APIKey=Mickey2024!',function(result){
                 arrTops = result
                 arrTops.forEach(function(top){
-                    console.log(top.Description);
-                    let strHTML = '<option value="' + top.Description + '">' + top.Description + '</option>'
+                    let strHTML = '<option value="' + top.styleID + '">' + top.Description + '</option>'
                     $('#cboTops').append(strHTML)
                 });
             })
@@ -66,8 +67,7 @@
         $.getJSON('https://www.swollenhippo.com/getBottomsByAPIKey.php?APIKey=Mickey2024!',function(result){
                 arrBottoms = result
                 arrBottoms.forEach(function(bottom){
-                    console.log(bottom.Description);
-                    let strHTML = '<option value="' + bottom.Description + '">' + bottom.Description + '</option>'
+                    let strHTML = '<option value="' + bottom.styleID + '">' + bottom.Description + '</option>'
                     $('#cboBottoms').append(strHTML)
                 });
             })
@@ -75,8 +75,7 @@
         $.getJSON('https://www.swollenhippo.com/getShoesByAPIKey.php?APIKey=Mickey2024!',function(result){
                 arrShoes = result
                 arrShoes.forEach(function(shoes){
-                    console.log(shoes.Description);
-                    let strHTML = '<option value="' + shoes.Description + '">' + shoes.Description + '</option>'
+                    let strHTML = '<option value="' + shoes.styleID + '">' + shoes.Description + '</option>'
                     $('#cboShoes').append(strHTML)
                 });
             })
@@ -88,47 +87,48 @@
             let strShipping = $('#txtShipping').val()
             let strBilling = $('#txtBilling').val()
             let strPhone = $('#txtPhone').val()
-            let strTop = $('#cboTops').val()
-            let strBottom = $('#cboBottoms').val()
-            let strShoes = $('#cboShoes').val()
+//To avoid taking in the value "styleID", I used .text() which gets all options. To get only the selected option, I use option:selected.
+            let strTop = $('#cboTops option:selected').text()
+            let strBottom = $('#cboBottoms option:selected').text()
+            let strShoes = $('#cboShoes option:selected').text()
 
             let blnError = false
             let strErrorMessage = ''
             if(strFirstName.length < 1){
                 blnError = true;
-                strErrorMessage = strErrorMessage + 'First name cannot be blank.\n'
+                strErrorMessage += 'First name cannot be blank.\n'
             }
             if(strLastName.length < 1){
                 blnError = true;
-                strErrorMessage = strErrorMessage + 'Last name cannot be blank.\n'
+                strErrorMessage += 'Last name cannot be blank.\n'
             }
-            if(strEmail.length < 1){
+            if(strEmail.length < 1 || !strEmail.includes('.') || !strEmail.includes('@')){
                 blnError = true;
-                strErrorMessage = strErrorMessage + 'Email cannot be blank.\n'
+                strErrorMessage += 'Email cannot be blank and must contain an @ and a period.\n'
             }
             if(strShipping.length < 1){
                 blnError = true;
-                strErrorMessage = strErrorMessage + 'Shipping Address cannot be blank.\n'
+                strErrorMessage += 'Shipping Address cannot be blank.\n'
             }
             if(strBilling.length < 1){
                 blnError = true;
-                strErrorMessage = strErrorMessage + 'Billing Address cannot be blank.\n'
+                strErrorMessage += 'Billing Address cannot be blank.\n'
             }
-            if(strPhone.length < 1){
+            if(strPhone.length != 10){
                 blnError = true;
-                strErrorMessage = strErrorMessage + 'Phone number cannot be blank.\n'
+                strErrorMessage += 'Phone number must be 10 characters.\n'
             }
-            if(strTop == null){
+            if(strTop.length < 1){
                 blnError = true;
-                strErrorMessage = strErrorMessage + 'You must select a top.\n'
+                strErrorMessage += 'You must select a top.\n'
             }
-            if(strBottom == null){
+            if(strBottom.length < 1){
                 blnError = true;
-                strErrorMessage = strErrorMessage + 'You must select a bottom.\n'
+                strErrorMessage += 'You must select a bottom.\n'
             }
-            if(strShoes == null){
+            if(strShoes.length < 1){
                 blnError = true;
-                strErrorMessage = strErrorMessage + 'You must select a shoe.\n'
+                strErrorMessage += 'You must select a shoe.\n'
             }
             if(blnError == true){
                 Swal.fire({
@@ -139,7 +139,19 @@
                 console.log(strErrorMessage)
             } else{
                 console.log('No errors found.')
-                let strHTML = '<div id="div' + intSearched + '" class="card"><div class="card-header"><h3>Order For ' + strFirstName + ' ' + strLastName +'</h3></div><div class="card-body"><h2 class="text-center col-12">' + 'Order contents' + '</h2><h3 class="text-center col-12">' + strTop + '</h3><h3 class="text-center col-12">' + strBottom + '</h3><h3 class="text-center col-12">' + strShoes + '</h3><button id="btnReset" type="button" class="col-12 btn btn-danger">Reset</button></div></div>'
+                console.log('Order', {
+                    First:strFirstName,
+                    Last:strLastName,
+                    Email:strEmail,
+                    Shipping:strShipping,
+                    Billing:strBilling,
+                    Phone:strPhone,
+                    Top:strTop,
+                    Bottom:strBottom,
+                    Shoes:strShoes
+                })
+
+                let strHTML = '<div id="div' + intSearched + '" class="card"><div class="card-header"><h3>Order For ' + strFirstName + ' ' + strLastName +'</h3></div><div class="card-body"><h2 class="text-center col-12">' + 'Order contents' + '</h2><p class="col-12">' + strTop + '</p><p class="col-12">' + strBottom + '</p><p class="col-12">' + strShoes + '</p><button id="btnReset" type="button" class="col-12 btn btn-danger">Reset</button></div></div>'
                 $('#divOrders').append(strHTML);
                 $('#divMain').removeClass('align-items-center').addClass('mt-5')
                 intSearched += 1
