@@ -62,11 +62,43 @@
                 </form>
             </div>
         </div>
+        <div id="divDashboard" class="card col-12 col-md-10 col-lg-9" style="display:none;">
+            <div class="card-header">
+                <h3>Dashboard</h3>
+            </div>
+            <div class="card-body">
+                This is a dashboard.
+                <button class="btn btn-danger col-12" id="btnLogout" type="button">Logout</button>
+            </div>
+        </div>
     </div>
     <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
+        $.get('https://www.thesimplehomestead.com/simpletime/sessions.php',{SessionID:sessionStorage.getItem('SimpleSession')},function(result){
+            result = JSON.parse(result)
+            if(result.Email){
+                $('#divLogin').slideUp(function(){
+                    $('#divDashboard').slideDown()
+                })
+            }
+        })
+
+        $('#btnLogout').on('click', function(){
+            $.ajax({
+                url: 'https://www.thesimplehomestead.com/simpletime/sessions.php',
+                type: 'DELETE',
+                data: {SessionID:sessionStorage.getItem('SimpleSession')},
+                success: function(result){
+                    sessionStorage.removeItem('SimpleSession')
+                    $('divDashboard').slideUp(function(){
+                        $('divLogin').slideDown()
+                    })
+                }
+            })
+        })
+
         $('#btnRegister').on('click',function(){
 
             let blnError = false
@@ -156,6 +188,9 @@
                     result = JSON.parse(result)
                     console.log(result)
                     sessionStorage.setItem('SimpleSession',result.SessionID)
+                    $.get('https://www.thesimplehomestead.com/simpletime/sessions.php',{SessionID:sessionStorage.getItem('SimpleSession')},function(result){
+                        console.log(result)
+                    })
                 })
             }
         })
