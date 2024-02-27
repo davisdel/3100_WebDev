@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>No Title In Tab</title>
+    <!-- Add your references to stylesheets (css) here-->
+    <!-- Use CDN to add Bootstrap style here-->
+</head>
+<body class="">
+    <div class=" flex-wrap col-12 col-md-8 offset-md-2 col-lg-6 offset-lg-3" id="divContent">
+        <!-- Registration card div -->
+        <div class="card col-12" id="divRegister" style="display:none;">
+            <div class="card-body">
+                <h2 class="col-12 text-center">Create Account</h2>
+                <form>
+                    <div class="form-group mb-3">
+                        <label class="form-label mb-0" for="txtEmail">Email Address</label>
+                        <input class="form-control"  id="txtEmail">
+                    </div>
+                    <div class="form-group mb-3">
+                        <label class="form-label mb-0" for="txtFirstName">First Name</label>
+                        <input class="form-control"  id="txtFirstName">
+                    </div>
+                    <div class="form-group mb-3">
+                        <label class="form-label mb-0" for="txtLastName">Last Name</label>
+                        <input class="form-control"  id="txtLastName">
+                    </div>
+                    <div class="form-group mb-3">
+                        <label class="form-label mb-0" for="txtOrgID">Organization ID</label>
+                        <input class="form-control"  id="txtOrgID">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label mb-0" for="txtPassword">Password</label>
+                        <input class="form-control"  id="txtPassword">
+                    </div>
+                    <button class="btn btn-primary col-12 mt-4" id="btnCreate" type="button">Create Account</button>
+                    <button class="btn btn-secondary col-12 mt-1" id="btnReturnLogin" type="button">Return to Login</button>
+                </form>
+            </div>
+        </div>
+        <!-- Login card div -->
+        <div class="card col-12" id="divLogin">
+            <div class="card-body">
+                <h2 class="col-12 text-center"><span class="fw-bold">Simple</span><span class="fw-light">Time</span></h2>
+                <form>
+                    <input class="form-control" type="email"  id="txtLoginEmail">
+                    <input class="form-control mt-1" type="password" id="txtLoginPassword">
+                    <button class="btn btn-primary col-12 mt-4" id="btnLogin" type="button">Login</button>
+                    <button class="btn btn-secondary col-12 mt-1" id="btnRegisterSwap" type="button">Create an Account</button>
+                </form>
+            </div>
+        </div>
+        <!-- Time card div -->
+        <div class="card col-12" id="divView" style="display:none;">
+            <div class="card-body">
+                <h2 class="col-12 text-center"><span class="fw-bold">Simple</span><span class="fw-light">Time</span></h2>
+                <p class="col-12 mt-2 fw-light text-center">After recording your current activity, you will be able to review your time</p>
+                <div class="col-12 mt-5 d-flex justify-content-around">
+                    <button class="btn btn-success col-5 btnClock" data-type="Clock In" id="btnClockIn">Clock In</button>
+                    <button class="btn btn-danger col-5 btnClock" data-type="Clock Out" id="btnClockOut">Clock Out</button>
+                </div>
+                <div class="col-12 mt-2 d-flex justify-content-center">
+                    <button class="btn btn-secondary btn-lg col-12" id="btnReview">View Records</button>
+                </div>
+                <div class="col-12 mt-2 d-flex justify-content-center">
+                    <button class="btn btn-secondary btn-lg col-12" id="btnLogout">Logout</button>
+                </div>
+            </div>
+        </div>
+    </div>   
+    <!-- Add references to scripts here; make sure the order is jQuery, Bootstrap, SweetAlert -->
+    <!-- Add jquery and sweet alert from the local directory -->
+    <!-- Use CDN to Add Bootstrap -->
+    <script>
+        $('#btnRegisterSwap').on('click', function(){
+            $('#divLogin').slideToggle(function(){
+                $('#divRegister').slideToggle();
+            })
+        })
+        $('#btnReturnLogin').on('click',function(){
+            $('#divRegister').slideToggle(function(){
+                $('#divLogin').slideToggle();
+            })
+        })
+        $('#btnReview').on('click',function(){
+            $.REDACTED('https://www.thesimplehomestead.com/simpletime/time.php',{SessionID:sessionStorage.getItem('TimeClockID')},function(result){
+                let strEntry = '';
+                
+                // Iterate across the array of objects to produce HTML content to display
+                // in the Sweet Alert below;  the items in the HTML content should be the Type
+                // followed by ' - ' and finished with the PunchDateTime
+
+                Swal.fire({
+                    icon:'info',
+                    title:'TimeClock Punches',
+                    html:strEntry
+                })
+            })
+        })
+        $('#btnCreate').on('click',function(){
+            // verify that the user has entered information for email, firstname, lastname, organizationid and password
+            
+            // verify that the orgid has a value of 3870
+            // if validation fails, display a sweet alert indicating what validation failed
+            
+            // if validation passes, use users.php web service to create a new user
+
+            // if response from users.php is an Error, display a sweet alert indicating the 
+            // error by referencing the value of the Error key
+
+            // if response from users.php is not an Error, create a new session with the sessions.php
+            // web service utilizing the value of the entered email/username and password
+
+            // if the response from sessions.php is not an Error, store the returned SessionID to the
+            // session storage of the browser with a key of TimeClockID
+            // then hide the register form and show the time clock interface
+            
+            // if the response from sessions.php is an Error, display a sweet alert indicating the value 
+            // of the Error returned.
+            
+        })
+        $('#btnLogin').on('click',function(){
+            $.post('https://www.thesimplehomestead.com/simpletime/sessions.php',{Email:$('#txtLoginEmail').val(),Password:$('#txtLoginPassword').val()},function(result){
+                result = JSON.parse(result);
+                if(result.Error){
+                    Swal.fire({
+                        icon:'error',
+                        title:'Oh no, something went wrong',
+                        text: result.Error
+                    })
+                } else {
+                    sessionStorage.setItem('TimeClockID',result.SessionID);
+                    $('#divLogin').slideToggle(function(){
+                        $('#divView').slideToggle();
+                    })
+                }
+            })
+        })
+
+        // use the starter code block below to 
+        // add click event to all clockin/clockout buttons;
+        $('').on('click',function(){
+            let strType = $(this).attr('data-type');
+            // Add a clock punch record
+            // Display result from punch record web service call as the html of a SweetAlert
+            $.REDACTED('https://www.thesimplehomestead.com/simpletime/time.php',{SessionID:sessionStorage.getItem('TimeClockID'),Type:strType},function(result){
+                // If the response is an Error, display a sweet alert with the 
+                // value of the Error key
+                
+                // If the response is not an Error, display a sweet alert with the
+                // value of the Outcome
+            })
+        })
+        $('#btnLogout').on('click',function(){
+            // delete the session and display the login div
+            $.ajax({
+                url: 'https://www.thesimplehomestead.com/simpletime/sessions.php',
+                type: 'REDACTED',
+                data: {SessionID:'REFERENCE THE VALUE HERE FROM SESSION STORAGE'},
+                success: function(result) {
+                    // remove the TimeClockID item from the browsers Session Storage
+
+                    // slide the View to hide it and slide the Login to show it
+                    
+                }
+            });
+        })
+    </script>
+</body>
+</html>
