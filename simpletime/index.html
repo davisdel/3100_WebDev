@@ -4,12 +4,13 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>No Title In Tab</title>
+    <title>Simple Time</title>
     <!-- Add your references to stylesheets (css) here-->
     <!-- Use CDN to add Bootstrap style here-->
+    <link href="https://cdn.jsdelivr.net/npm/bootswatch@4.5.2/dist/lux/bootstrap.min.css" rel="stylesheet">
 </head>
-<body class="">
-    <div class=" flex-wrap col-12 col-md-8 offset-md-2 col-lg-6 offset-lg-3" id="divContent">
+<body class="bg-dark">
+    <div class="d-flex vh-100 justify-content-center align-items-center flex-wrap col-12 col-md-8 offset-md-2 col-lg-6 offset-lg-3" id="divContent">
         <!-- Registration card div -->
         <div class="card col-12" id="divRegister" style="display:none;">
             <div class="card-body">
@@ -17,23 +18,23 @@
                 <form>
                     <div class="form-group mb-3">
                         <label class="form-label mb-0" for="txtEmail">Email Address</label>
-                        <input class="form-control"  id="txtEmail">
+                        <input class="form-control"  id="txtEmail" type="email">
                     </div>
                     <div class="form-group mb-3">
                         <label class="form-label mb-0" for="txtFirstName">First Name</label>
-                        <input class="form-control"  id="txtFirstName">
+                        <input class="form-control"  id="txtFirstName" type="text">
                     </div>
                     <div class="form-group mb-3">
                         <label class="form-label mb-0" for="txtLastName">Last Name</label>
-                        <input class="form-control"  id="txtLastName">
+                        <input class="form-control"  id="txtLastName" type="text">
                     </div>
                     <div class="form-group mb-3">
                         <label class="form-label mb-0" for="txtOrgID">Organization ID</label>
-                        <input class="form-control"  id="txtOrgID">
+                        <input class="form-control"  id="txtOrgID" type="number">
                     </div>
                     <div class="form-group">
                         <label class="form-label mb-0" for="txtPassword">Password</label>
-                        <input class="form-control"  id="txtPassword">
+                        <input class="form-control"  id="txtPassword" type="password">
                     </div>
                     <button class="btn btn-primary col-12 mt-4" id="btnCreate" type="button">Create Account</button>
                     <button class="btn btn-secondary col-12 mt-1" id="btnReturnLogin" type="button">Return to Login</button>
@@ -45,8 +46,14 @@
             <div class="card-body">
                 <h2 class="col-12 text-center"><span class="fw-bold">Simple</span><span class="fw-light">Time</span></h2>
                 <form>
-                    <input class="form-control" type="email"  id="txtLoginEmail">
-                    <input class="form-control mt-1" type="password" id="txtLoginPassword">
+                    <div class="form-group mb-3">
+                        <label for="txtEmailLogin">Email</label>
+                        <input class="form-control" type="email"  id="txtLoginEmail" placeholder="johndoe@gmail.com">
+                    </div>
+                    <div class="form-group mb-3">
+                        <label for="txtLoginPassword">Password</label>
+                        <input class="form-control mt-1" type="password" id="txtLoginPassword" placeholder="Password">
+                    </div>
                     <button class="btn btn-primary col-12 mt-4" id="btnLogin" type="button">Login</button>
                     <button class="btn btn-secondary col-12 mt-1" id="btnRegisterSwap" type="button">Create an Account</button>
                 </form>
@@ -58,14 +65,14 @@
                 <h2 class="col-12 text-center"><span class="fw-bold">Simple</span><span class="fw-light">Time</span></h2>
                 <p class="col-12 mt-2 fw-light text-center">After recording your current activity, you will be able to review your time</p>
                 <div class="col-12 mt-5 d-flex justify-content-around">
-                    <button class="btn btn-success col-5 btnClock" data-type="Clock In" id="btnClockIn">Clock In</button>
-                    <button class="btn btn-danger col-5 btnClock" data-type="Clock Out" id="btnClockOut">Clock Out</button>
+                    <button class="btn btn-success col-5 btnClock btn-lg" data-type="Clock In" id="btnClockIn">Clock In</button>
+                    <button class="btn btn-danger col-5 btnClock btn-lg" data-type="Clock Out" id="btnClockOut">Clock Out</button>
                 </div>
                 <div class="col-12 mt-2 d-flex justify-content-center">
-                    <button class="btn btn-secondary btn-lg col-12" id="btnReview">View Records</button>
+                    <button class="btn btn-secondary btn-lg col-12 btn-lg" id="btnReview">View Records</button>
                 </div>
                 <div class="col-12 mt-2 d-flex justify-content-center">
-                    <button class="btn btn-secondary btn-lg col-12" id="btnLogout">Logout</button>
+                    <button class="btn btn-secondary btn-lg col-12 btn-lg" id="btnLogout">Logout</button>
                 </div>
             </div>
         </div>
@@ -73,7 +80,11 @@
     <!-- Add references to scripts here; make sure the order is jQuery, Bootstrap, SweetAlert -->
     <!-- Add jquery and sweet alert from the local directory -->
     <!-- Use CDN to Add Bootstrap -->
+    <script src="./js/lib/jquery-3.6.3.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
+    <script src="./js/lib/sweetalert2.min.js"></script>
     <script>
+
         $('#btnRegisterSwap').on('click', function(){
             $('#divLogin').slideToggle(function(){
                 $('#divRegister').slideToggle();
@@ -84,10 +95,17 @@
                 $('#divLogin').slideToggle();
             })
         })
+
         $('#btnReview').on('click',function(){
-            $.REDACTED('https://www.thesimplehomestead.com/simpletime/time.php',{SessionID:sessionStorage.getItem('TimeClockID')},function(result){
+            $.get('https://www.thesimplehomestead.com/simpletime/time.php',{SessionID:sessionStorage.getItem('TimeClockID')},function(result){
+                result = JSON.parse(result)
+                console.log(result)
                 let strEntry = '';
                 
+                for (let i = 0; i < result.length; i++) {
+                    strEntry += result[i].Type + " - " + result[i].PunchDateTime + "<br>";
+                }
+
                 // Iterate across the array of objects to produce HTML content to display
                 // in the Sweet Alert below;  the items in the HTML content should be the Type
                 // followed by ' - ' and finished with the PunchDateTime
@@ -95,11 +113,78 @@
                 Swal.fire({
                     icon:'info',
                     title:'TimeClock Punches',
-                    html:strEntry
+                    html:"<p>" + strEntry + "</p>"
                 })
             })
         })
+
         $('#btnCreate').on('click',function(){
+            
+            let blnError = false
+            let strError = ''
+
+            let strFirstName = $('#txtFirstName').val()
+            let strLastName = $('#txtLastName').val()
+            let strEmail = $('#txtEmail').val()
+            let strPassword = $('#txtPassword').val()
+            let strOrgID = $('#txtOrgID').val()
+
+            if(strFirstName.length < 1){
+                blnError = true;
+                strError += '<p>First name cannot be blank.</p>'
+            }
+            if(strLastName.length < 1){
+                blnError = true;
+                strError += '<p>Last name cannot be blank.</p>'
+            }
+            if(strEmail.length < 1){
+                blnError = true;
+                strError += '<p>Email cannot be blank.</p>'
+            }
+            if(strPassword.length < 1){
+                blnError = true;
+                strError += '<p>Password cannot be blank.</p>'
+            }
+            if(strOrgID != 3870){
+                blnError = true;
+                strError += '<p>Organization ID is incorrect.</p>'
+            }
+            if(blnError == true){
+                Swal.fire({
+                    title: "Oops!",
+                    html: strError,
+                    icon: "error"
+                });
+                console.log(strError)
+            } else {
+                $.post('https://www.thesimplehomestead.com/simpletime/users.php',{Email:strEmail,FirstName:strFirstName,LastName:strLastName,OrgNumber:strOrgID,Password:strPassword},function(result){
+                    result = JSON.parse(result);
+                    console.log(result)
+                    if(result.Error){
+                        Swal.fire({
+                            title: "Oops!",
+                            text: result.Error,
+                            icon: "error"
+                        }); 
+                    } else {
+                        $.post('https://www.thesimplehomestead.com/simpletime/sessions.php',{Email:strEmail,Password:strPassword},function(result){
+                            result = JSON.parse(result);
+                            if(result.Error){
+                                Swal.fire({
+                                    icon:'error',
+                                    title:'Oh no, something went wrong',
+                                    text: result.Error
+                                })
+                            } else {
+                                sessionStorage.setItem('TimeClockID',result.SessionID);
+                                $('#divRegister').slideToggle(function(){
+                                    $('#divView').slideToggle();
+                                })
+                            }
+                        })
+                    }
+                })
+            }
             // verify that the user has entered information for email, firstname, lastname, organizationid and password
             
             // verify that the orgid has a value of 3870
@@ -121,6 +206,7 @@
             // of the Error returned.
             
         })
+
         $('#btnLogin').on('click',function(){
             $.post('https://www.thesimplehomestead.com/simpletime/sessions.php',{Email:$('#txtLoginEmail').val(),Password:$('#txtLoginPassword').val()},function(result){
                 result = JSON.parse(result);
@@ -141,29 +227,46 @@
 
         // use the starter code block below to 
         // add click event to all clockin/clockout buttons;
-        $('').on('click',function(){
+        $('.btnClock').on('click',function(){
             let strType = $(this).attr('data-type');
             // Add a clock punch record
             // Display result from punch record web service call as the html of a SweetAlert
-            $.REDACTED('https://www.thesimplehomestead.com/simpletime/time.php',{SessionID:sessionStorage.getItem('TimeClockID'),Type:strType},function(result){
+            $.post('https://www.thesimplehomestead.com/simpletime/time.php',{SessionID:sessionStorage.getItem('TimeClockID'),Type:strType},function(result){
                 // If the response is an Error, display a sweet alert with the 
                 // value of the Error key
-                
+                result = JSON.parse(result)
+                console.log(result)
+                if(result.Error){
+                    Swal.fire({
+                        icon:'error',
+                        title:'Oh no, something went wrong',
+                        text: result.Error
+                    })
+                } else {
+                    Swal.fire({
+                        icon:'success',
+                        title:'Result',
+                        text: result.Outcome
+                    })
+                }
                 // If the response is not an Error, display a sweet alert with the
                 // value of the Outcome
             })
         })
+
         $('#btnLogout').on('click',function(){
             // delete the session and display the login div
             $.ajax({
                 url: 'https://www.thesimplehomestead.com/simpletime/sessions.php',
-                type: 'REDACTED',
-                data: {SessionID:'REFERENCE THE VALUE HERE FROM SESSION STORAGE'},
+                type: 'DELETE',
+                data: {SessionID:sessionStorage.getItem('TimeClockID')},
                 success: function(result) {
                     // remove the TimeClockID item from the browsers Session Storage
-
+                    sessionStorage.removeItem('TimeClockID')
                     // slide the View to hide it and slide the Login to show it
-                    
+                    $('#divView').slideToggle(function(){
+                        $('#divLogin').slideToggle();
+                    })
                 }
             });
         })
