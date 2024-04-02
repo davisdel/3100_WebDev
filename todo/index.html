@@ -10,11 +10,53 @@
 </head>
 <body class="bg-dark">
     <div class="d-flex vh-100 justify-content-center align-items-center flex-wrap col-12 col-md-8 offset-md-2 col-lg-6 offset-lg-3" id="divContent">
-        <!-- Registration card div -->
-        <div class="card col-12" id="divTasks">
-            <div class="card-body">
+        <!-- Main card div -->
+        <div class="card col-12" id="divMain">
+            <div class="card-header">
                 <h2 class="col-12 text-center">Task List</h2>
-                
+            </div>
+            <div class="card-body">
+                <div id="divTasks">
+                    <!-- Insert tasks here -->
+                </div>
+                <div class="row">
+                    <button type="button" class="btn btn-success mr-3" id="btnAddTask">Add Task</button>
+                    <button type="button" class="btn btn-danger" id="btnRemoveTask">Remove Tasks</button>
+                </div>    
+            </div>
+        </div>
+        <!-- Add task div -->
+        <div class="card col-12" id="divAdd" style="display:none;">
+            <div class="card-header">
+                <h2 class="col-12 text-center">Add Task</h2>
+            </div>
+            <div class="card-body">
+                <form>
+                    <div class="form-group mb-3">
+                        <label class="form-label mb-0" for="txtName">Name</label>
+                        <input class="form-control"  id="txtName" type="text">
+                    </div>
+                    <div class="form-group mb-3">
+                        <label class="form-label mb-0" for="txtDate">Due Date</label>
+                        <input class="form-control"  id="txtDate" type="text">
+                    </div>
+                    <div class="form-group mb-3">
+                        <label class="form-label mb-0" for="txtLocation">Location</label>
+                        <input class="form-control"  id="txtLocation" type="text">
+                    </div>
+                    <div class="form-group mb-3">
+                        <label class="form-label mb-0" for="txtInstructions">Instructions</label>
+                        <input class="form-control"  id="txtInstructions" type="text">
+                    </div>
+                    <div class="form-group mb-3">
+                        <label class="form-label mb-0" for="txtStatus">Status</label>
+                        <input class="form-control"  id="txtStatus" type="text">
+                    </div>
+                </form>
+                <div class="row">
+                    <button type="button" class="btn btn-success mr-3" id="btnConfirmAdd">Add Task</button>
+                    <button type="button" class="btn btn-secondary" id="btnReturn">Return</button>
+                </div>    
             </div>
         </div>
     </div>   
@@ -24,5 +66,79 @@
     <script src="./js/lib/jquery-3.6.3.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
     <script src="./js/lib/sweetalert2.min.js"></script>
+    <script>
+
+// run on page load, fill page with existing tasks
+        function getTasks(){
+            $.getJSON("http://localhost:8080", function(result){
+                console.log(result)
+                if(result.error){
+                    Swal.fire({
+                        icon:'error',
+                        title:'Error!',
+                        html:"<p>" + result.error + "</p>"
+                    })
+                } else if(result.message.indexOf("not found") !== -1){
+                    $('#divTasks').append("<p>No tasks to do!</p>")
+                } else {
+                    console.log()
+                    $('#divTasks').append("<ul id='listTasks'></ul>")
+                    result.tasks.forEach(function(task){
+                        $('#listTasks').append("<li>Task: " + task.TaskName + " Due:" + task.DueDate + "</li>")
+                    })
+                }
+            })
+        }
+
+//set the content type for the body of the request to application/json
+        $.ajaxSetup({
+            contentType: "application/json; charset=utf-8"
+        });
+
+        $('#btnConfirmAdd').on('click',function(){
+
+            strName = $('#txtName').val().trim()
+            strDate = $('#txtDate').val().trim()
+            strLocation = $('#txtLocation').val().trim()
+            strInstructions = $('#txtInstructions').val().trim()
+            strStatus = $('#txtStatus').val().trim()
+
+
+            $.post("http://localhost:8080/todo",JSON.stringify({name:strName,duedate:strDate,location:strLocation,instructions:strInstructions,status:strStatus}),function(result){
+                if(result.error){
+                    Swal.fire({
+                        icon:'error',
+                        title:'Error!',
+                        html:"<p>" + result.error + "</p>"
+                    })
+                } else {
+                    getTasks()
+                    $('#divAdd').slideToggle(function(){
+                        $('#divMain').slideToggle()
+                    })
+                }
+            })
+        })
+
+//initialize the task list
+        getTasks()
+
+// on click, toggle to the add task form
+        $('#btnAddTask').on('click', function(){
+            $('#divTasks').empty()
+            $('#divMain').slideToggle(function(){
+                $('#divAdd').slideToggle()
+            })
+        })
+
+//return button that brings the user back to the task list and reinits the task list
+        $('#btnReturn').on('click', function(){
+            getTasks()
+            $('#divAdd').slideToggle(function(){
+                $('#divMain').slideToggle()
+            })
+        })
+
+    </script>
 </body>
 </html>

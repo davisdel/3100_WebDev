@@ -10,15 +10,20 @@ const HTTP_PORT = 8080;
 
 var app = express();
 app.use(cors());
+app.use(express.json());
 
 app.get("/", (req,res,next) => {
 
     let strCommand = "SELECT * FROM tblTasks";
     db.all(strCommand,(err,rows) => {
-        if(err){
-            res.json({"status":400,"error":err.message});
+        if(rows.length < 1){
+            res.json({"status":200,"message":"error: not found"});
         } else {
-            res.json({"status":200,"message":"success","tasks":rows});
+            if(err){
+                res.json({"status":400,"error":err.message});
+            } else {
+                res.json({"status":200,"message":"success","tasks":rows});
+            }
         }
     })
 });
@@ -48,16 +53,20 @@ app.get("/todo/:name", (req,res,next) => {
 
 app.post("/todo", (req,res,next) => {
 
-    let strName = req.query.name;
-    let dateDue = req.query.duedate;
-    let strCommand = "INSERT INTO tblTasks (name, color) VALUES (?,?)";
-    if(strName && strColor){
-        let arrParameters = [strName, strColor];
+    let strName = req.body.name;
+    let dateDue = req.body.duedate;
+    let strLocation = req.body.location;
+    let strInstruction = req.body.instructions;
+    let strStatus = req.body.status;
+    let taskID = uuidv4();
+    let strCommand = "INSERT INTO tblTasks (TaskName, DueDate, Location, Instructions, Status, TaskID) VALUES (?,?,?,?,?,?)";
+    if(strName && dateDue){
+        let arrParameters = [strName, dateDue, strLocation, strInstruction, strStatus, taskID];
         db.run(strCommand, arrParameters, (err,rows) => {
             if(err){
                 res.json({"status":400,"error":err.message});
             } else {
-                res.json({"status":201,"message":"success","task":rows});
+                res.json({"status":201,"message":"success"});
             }
         })
     } else {
@@ -68,7 +77,7 @@ app.post("/todo", (req,res,next) => {
 
 app.delete("/todo", (req,res,next) => {
     
-    let strID = req.query.id;
+    let strID = req.body.id;
     let strCommand = "DELETE FROM tblTasks WHERE TaskID=?";
     let arrParameters = [strID];
     if(strID){
