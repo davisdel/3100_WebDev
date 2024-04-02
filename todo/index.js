@@ -14,11 +14,11 @@ app.use(cors());
 app.get("/", (req,res,next) => {
 
     let strCommand = "SELECT * FROM tblTasks";
-    db.all(strCommand,(err,row) => {
+    db.all(strCommand,(err,rows) => {
         if(err){
             res.json({"status":400,"error":err.message});
         } else {
-            res.json({"status":200,"message":"success","tasks":row});
+            res.json({"status":200,"message":"success","tasks":rows});
         }
     })
 });
@@ -29,14 +29,14 @@ app.get("/todo/:name", (req,res,next) => {
     if(strName){
         let strCommand = "SELECT * FROM tblTasks WHERE TaskName=?";
         let arrParameters = [strName];
-        db.all(strCommand,arrParameters,(err,row) => {
+        db.all(strCommand,arrParameters,(err,rows) => {
             if(err){
                 res.json({"status":400,"error":err.message});
             } else {
-                if(row.length < 1){
+                if(rows.length < 1){
                     res.json({"status":200,"message":"error: not found"});
                 } else {
-                    res.json({"status":200,"message":"success","task":row});
+                    res.json({"status":200,"message":"success","task":rows});
                 }
             }
         })
@@ -46,25 +46,42 @@ app.get("/todo/:name", (req,res,next) => {
 
 });
 
-app.post("/todo/:id", (req,res,next) => {
+app.post("/todo", (req,res,next) => {
 
     let strName = req.query.name;
-    let strColor = req.query.color;
-    let strCommand = "INSERT INTO tblFruit (name, color) VALUES (?,?)";
+    let dateDue = req.query.duedate;
+    let strCommand = "INSERT INTO tblTasks (name, color) VALUES (?,?)";
     if(strName && strColor){
         let arrParameters = [strName, strColor];
-        let objFruit = new Fruit(strName, strColor);
-        db.run(strCommand, arrParameters, (err,row) => {
+        db.run(strCommand, arrParameters, (err,rows) => {
             if(err){
                 res.json({"status":400,"error":err.message});
             } else {
-                res.json({"status":201,"message":"success","fruit":objFruit});
+                res.json({"status":201,"message":"success","task":rows});
             }
         })
     } else {
         res.json({"status":400,"error":"Not all parameters provided"});
     }
 
+});
+
+app.delete("/todo", (req,res,next) => {
+    
+    let strID = req.query.id;
+    let strCommand = "DELETE FROM tblTasks WHERE TaskID=?";
+    let arrParameters = [strID];
+    if(strID){
+        db.run(strCommand, arrParameters, (err,rows) => {
+            if(err){
+                res.json({"status":400,"error":err.message});
+            } else {
+                res.json({"status":201,"message":"success","task":rows});
+            }
+        })
+    } else {
+        res.json({"status":200,"message":"Task not found"});
+    }
 
 });
 
