@@ -28,28 +28,30 @@ app.get("/", (req,res,next) => {
     })
 });
 
-app.get("/todo/:name", (req,res,next) => {
+//unused function for getting specific tasks by id
 
-    let strName = req.params.name;
-    if(strName){
-        let strCommand = "SELECT * FROM tblTasks WHERE TaskName=?";
-        let arrParameters = [strName];
-        db.all(strCommand,arrParameters,(err,rows) => {
-            if(err){
-                res.json({"status":400,"error":err.message});
-            } else {
-                if(rows.length < 1){
-                    res.json({"status":200,"message":"error: not found"});
-                } else {
-                    res.json({"status":200,"message":"success","task":rows});
-                }
-            }
-        })
-    } else {
-        res.json({"status":400,"error":"No task name provided"});
-    }
+// app.get("/todo", (req,res,next) => {
 
-});
+//     let strID = req.body.id;
+//     if(strID){
+//         let strCommand = "SELECT * FROM tblTasks WHERE TaskName=?";
+//         let arrParameters = [strName];
+//         db.all(strCommand,arrParameters,(err,rows) => {
+//             if(err){
+//                 res.json({"status":400,"error":err.message});
+//             } else {
+//                 if(rows.length < 1){
+//                     res.json({"status":200,"message":"error: not found"});
+//                 } else {
+//                     res.json({"status":200,"message":"success","task":rows});
+//                 }
+//             }
+//         })
+//     } else {
+//         res.json({"status":400,"error":"No task name provided"});
+//     }
+
+// });
 
 app.post("/todo", (req,res,next) => {
 
@@ -60,13 +62,13 @@ app.post("/todo", (req,res,next) => {
     let strStatus = req.body.status;
     let taskID = uuidv4();
     let strCommand = "INSERT INTO tblTasks (TaskName, DueDate, Location, Instructions, Status, TaskID) VALUES (?,?,?,?,?,?)";
-    if(strName && dateDue){
+    if(strName && dateDue && strLocation && strStatus && strInstruction){
         let arrParameters = [strName, dateDue, strLocation, strInstruction, strStatus, taskID];
         db.run(strCommand, arrParameters, (err,rows) => {
             if(err){
                 res.json({"status":400,"error":err.message});
             } else {
-                res.json({"status":201,"message":"success"});
+                res.json({"status":201,"message":"Task added successfully"});
             }
         })
     } else {
@@ -85,11 +87,11 @@ app.delete("/todo", (req,res,next) => {
             if(err){
                 res.json({"status":400,"error":err.message});
             } else {
-                res.json({"status":201,"message":"success","task":rows});
+                res.json({"status":201,"message":"Task removed successfully"});
             }
         })
     } else {
-        res.json({"status":200,"message":"Task not found"});
+        res.json({"status":200,"error":"Task not found"});
     }
 
 });
