@@ -77,6 +77,26 @@ app.post("/todo", (req,res,next) => {
 
 });
 
+app.patch("/todo", (req,res,next) => {
+
+    let strStatus = req.body.status;
+    let taskID = req.body.id;
+    let strCommand = "UPDATE tblTasks SET Status=? WHERE TaskID=?";
+    if(strStatus && taskID){
+        let arrParameters = [strStatus, taskID];
+        db.run(strCommand, arrParameters, (err,rows) => {
+            if(err){
+                res.json({"status":400,"error":err.message});
+            } else {
+                res.json({"status":201,"message":"Task updated successfully"});
+            }
+        })
+    } else {
+        res.json({"status":400,"error":"Not all parameters provided"});
+    }
+
+});
+
 app.delete("/todo", (req,res,next) => {
     
     let strID = req.body.id;
