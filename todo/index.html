@@ -35,27 +35,27 @@
             <div class="card-body">
                 <form>
                     <div class="form-floating mb-3">
-                        <label class="form-label mb-0" for="txtName">Name</label>
-                        <input class="form-control"  id="txtName" type="text" placeholder="Task name">
+                        <input class="form-control rounded"  id="txtName" type="text" placeholder="Task name" required>
+                        <label for="txtName">Name</label>
                     </div>
-                    <div class="form-group mb-3">
-                        <label class="form-label mb-0" for="txtDate">Due Date</label>
-                        <input class="form-control"  id="txtDate" type="date" placeholder="Due date">
+                    <div class="form-floating mb-3">
+                        <input class="form-control rounded"  id="txtDate" type="date" required>
+                        <label for="txtDate">Due Date</label>
                     </div>
-                    <div class="form-group mb-3">
-                        <label class="form-label mb-0" for="txtLocation">Location</label>
-                        <input class="form-control"  id="txtLocation" type="text" placeholder="Location">
+                    <div class="form-floating mb-3">
+                        <input class="form-control rounded"  id="txtLocation" type="text" placeholder="Location" required>
+                        <label for="txtLocation">Location</label>
                     </div>
-                    <div class="form-group mb-3">
-                        <label class="form-label mb-0" for="selStatus">Status</label>
-                        <select class="form-control"  id="selStatus">
-                            <option value="false" selected>Incomplete</option>
-                            <option value="true">Complete</option>
+                    <div class="form-floating mb-3">                        
+                        <select class="form-control"  id="selStatus" required>
+                            <option val="false" selected>Incomplete</option>
+                            <option val="true">Complete</option>
                         </select>
+                        <label for="selStatus">Status</label>
                     </div>
-                    <div class="form-group mb-3">
-                        <label class="form-label mb-0" for="txtInstructions">Instructions</label>
-                        <textarea class="form-control"  id="txtInstructions" rows="7" placeholder="Write some instructions here..."></textarea>
+                    <div class="form-floating mb-3">
+                        <textarea class="form-control"  id="txtInstructions" rows="7" placeholder="Write some instructions here..." required></textarea>
+                        <label for="txtInstructions">Instructions</label>
                     </div>
                 </form>
                 <div class="row px-2 justify-content-end">
