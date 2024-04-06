@@ -28,30 +28,30 @@ app.get("/", (req,res,next) => {
     })
 });
 
-//unused function for getting specific tasks by id
 
-// app.get("/todo", (req,res,next) => {
+//get single task
+app.get("/task", (req,res,next) => {
 
-//     let strID = req.body.id;
-//     if(strID){
-//         let strCommand = "SELECT * FROM tblTasks WHERE TaskName=?";
-//         let arrParameters = [strName];
-//         db.all(strCommand,arrParameters,(err,rows) => {
-//             if(err){
-//                 res.json({"status":400,"error":err.message});
-//             } else {
-//                 if(rows.length < 1){
-//                     res.json({"status":200,"message":"error: not found"});
-//                 } else {
-//                     res.json({"status":200,"message":"success","task":rows});
-//                 }
-//             }
-//         })
-//     } else {
-//         res.json({"status":400,"error":"No task name provided"});
-//     }
+    let strID = req.query.id;
+    if(strID){
+        let strCommand = "SELECT * FROM tblTasks WHERE TaskID=?";
+        let arrParameters = [strID];
+        db.all(strCommand,arrParameters,(err,rows) => {
+            if(err){
+                res.json({"status":400,"error":err.message});
+            } else {
+                if(rows.length < 1){
+                    res.json({"status":200,"message":"error: not found"});
+                } else {
+                    res.json({"status":200,"message":"success","task":rows});
+                }
+            }
+        })
+    } else {
+        res.json({"status":400,"error":"No task id provided"});
+    }
 
-// });
+});
 
 app.post("/todo", (req,res,next) => {
 
@@ -84,6 +84,30 @@ app.patch("/todo", (req,res,next) => {
     let strCommand = "UPDATE tblTasks SET Status=? WHERE TaskID=?";
     if(strStatus && taskID){
         let arrParameters = [strStatus, taskID];
+        db.run(strCommand, arrParameters, (err,rows) => {
+            if(err){
+                res.json({"status":400,"error":err.message});
+            } else {
+                res.json({"status":201,"message":"Task updated successfully"});
+            }
+        })
+    } else {
+        res.json({"status":400,"error":"Not all parameters provided"});
+    }
+
+});
+
+app.put("/todo", (req,res,next) => {
+
+    let taskID = req.body.id;
+    let strName = req.body.name;
+    let dateDue = req.body.duedate;
+    let strLocation = req.body.location;
+    let strInstruction = req.body.instructions;
+    let strStatus = req.body.status;
+    let strCommand = "UPDATE tblTasks SET TaskName=?, DueDate=?, Location=?, Instructions=?, Status=? WHERE TaskID=?";
+    if(strName && dateDue && strLocation && strStatus && strInstruction){
+        let arrParameters = [strName, dateDue, strLocation, strInstruction, strStatus, taskID];
         db.run(strCommand, arrParameters, (err,rows) => {
             if(err){
                 res.json({"status":400,"error":err.message});

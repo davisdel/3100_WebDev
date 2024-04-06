@@ -15,3 +15,9 @@
     background-color:#eeeef4;
     color:grey;
 }
+
+.btn-card {
+    background-color:white;
+    outline:none;
+    text-align:left;
+}

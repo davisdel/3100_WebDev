@@ -7,11 +7,13 @@
     <title>Todo App</title>
     <!-- Bootstrap style here -->
     <link href="./css/main.css" rel="stylesheet">
+    <!-- Import bootstrap icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 </head>
 <body class="bg-custom">
     <div class="d-flex vh-100 justify-content-center align-items-center flex-wrap col-12 col-md-8 offset-md-2 col-lg-6 offset-lg-3" id="divContent">
         <!-- Main card div -->
-        <div class="card col-8 rounded-3" id="divMain">
+        <div class="card col-8 rounded-3 shadow" id="divMain">
             <div class="card-header">
                 <div class="row align-items-center">
                     <h3 class="col-auto">Tasks</h3>
@@ -30,7 +32,7 @@
         <!-- Add task div -->
         <div class="card col-8 rounded" id="divAdd" style="display:none;">
             <div class="card-header">
-                <h2 class="col-auto">Add Task</h2>
+                <h3 class="col-auto">Add Task</h3>
             </div>
             <div class="card-body">
                 <form>
@@ -48,8 +50,8 @@
                     </div>
                     <div class="form-floating mb-3">                        
                         <select class="form-control"  id="selStatus" required>
-                            <option val="false" selected>Incomplete</option>
-                            <option val="true">Complete</option>
+                            <option value="incomplete" selected>Incomplete</option>
+                            <option value="complete">Complete</option>
                         </select>
                         <label for="selStatus">Status</label>
                     </div>
@@ -60,10 +62,51 @@
                 </form>
                 <div class="row px-2 justify-content-end">
                     <div class="col-auto">
-                        <button type="button" class="btn btn-secondary rounded px-3 py-1" id="btnReturn" aria-label="return button">Return</button>
+                        <button type="button" class="btn btn-secondary rounded px-3 py-1" id="btnAddReturn" aria-label="return button">Return</button>
                     </div>
                     <div class="col-auto">
                         <button type="button" class="btn btn-custom rounded px-3 py-1" id="btnConfirmAdd" aria-label="submit button">Add Task</button>
+                    </div>
+                </div>    
+            </div>
+        </div>
+        <!-- Edit task div -->
+        <div class="card col-8 rounded" id="divEdit" style="display:none;">
+            <div class="card-header">
+                <h3 class="col-auto">Edit Task</h3>
+            </div>
+            <div class="card-body">
+                <form>
+                    <div class="form-floating mb-3">
+                        <input class="form-control rounded"  id="txtEditName" type="text" placeholder="Task name" required>
+                        <label for="txtName">Name</label>
+                    </div>
+                    <div class="form-floating mb-3">
+                        <input class="form-control rounded"  id="txtEditDate" type="date" required>
+                        <label for="txtDate">Due Date</label>
+                    </div>
+                    <div class="form-floating mb-3">
+                        <input class="form-control rounded"  id="txtEditLocation" type="text" placeholder="Location" required>
+                        <label for="txtLocation">Location</label>
+                    </div>
+                    <div class="form-floating mb-3">                        
+                        <select class="form-control"  id="selEditStatus" required>
+                            <option value="incomplete" selected>Incomplete</option>
+                            <option value="complete">Complete</option>
+                        </select>
+                        <label for="selStatus">Status</label>
+                    </div>
+                    <div class="form-floating mb-3">
+                        <textarea class="form-control"  id="txtEditInstructions" rows="7" placeholder="Write some instructions here..." required></textarea>
+                        <label for="txtInstructions">Instructions</label>
+                    </div>
+                </form>
+                <div class="row px-2 justify-content-end">
+                    <div class="col-auto">
+                        <button type="button" class="btn btn-secondary rounded px-3 py-1" id="btnEditReturn" aria-label="return button">Return</button>
+                    </div>
+                    <div class="col-auto">
+                        <button type="button" class="btn btn-custom rounded px-3 py-1" id="btnSave" aria-label="submit button">Submit Edit</button>
                     </div>
                 </div>    
             </div>
@@ -86,6 +129,8 @@
                         title:'Error!',
                         html:"<p>" + result.error + "</p>"
                     })
+                    $('#divTasks').append("<p>Error pulling from database!</p>")
+                    $('#taskCounter').text(0)
                 } else if(result.message.indexOf("not found") !== -1){
                     $('#divTasks').append("<p>No tasks to do!</p>")
                     $('#taskCounter').text(0)
@@ -98,17 +143,19 @@
                                     <div class='col-auto'>
                                         <input class='form-check-input statusCheck mr-5 rounded check-custom' type='checkbox' value='${task.Status}'>
                                     </div>
-                                    <div class='col ms-3'>
-                                        <p class='mb-0 bold'>Task: ${task.TaskName} | Due: ${task.DueDate}</p>
-                                    </div>
+                                    <button class='col ms-3 btn btn-card rounded btnDesc'>
+                                        <h5 class='mb-0 bold'>${task.TaskName}</h5>
+                                        <p class='mb-0' value='${task.Instructions}'><i class='bi bi-calendar2-date'></i> ${task.DueDate} <i class="bi bi-geo-alt"></i> ${task.Location}</p>
+                                    </button>
                                     <div class='col-auto'>
-                                        <button type='button' class='btn btn-danger btnRemove btn-sm py-0 rounded' aria-label='remove task button'>Remove</button>
+                                        <button type='button' class='btn btnEdit btn-sm py-0 px-1 rounded' aria-label='edit task button'><i class="bi bi-pencil"></i></button>
+                                        <button type='button' class='btn btn-danger btnRemove btn-sm py-0 px-1 rounded' aria-label='remove task button'><i class="bi bi-x"></i></button>
                                     </div>
                                 </div>
                             </div>
                         `)
 
-                        if(task.Status == 'true'){
+                        if(task.Status == 'complete'){
                             $('#' + task.TaskID + ' .statusCheck').attr('checked', true)
                         }
                     })
@@ -141,6 +188,45 @@
             })
         }
 
+//on clicking the edit button, the user should be able to edit tasks. wait until document has loaded because buttons are dynamically added
+        function editTask(strID) {
+
+            let strName = $('#txtEditName').val().trim()
+            let strDate = $('#txtEditDate').val().trim().toString()
+            let strLocation = $('#txtEditLocation').val().trim()
+            let strInstructions = $('#txtEditInstructions').val().trim()
+            let strStatus = $('#selEditStatus').val().trim()
+
+            $.ajax({
+                url: 'http://localhost:8080/todo',
+                type: 'PUT',
+                data: JSON.stringify({id:strID,name:strName,duedate:strDate,location:strLocation,instructions:strInstructions,status:strStatus}),
+                contentType: "application/json",
+                success: function(result) {
+                    if(result.error){
+                        Swal.fire({
+                            icon:'error',
+                            title:'Error!',
+                            html:"<p>" + result.error + "</p>"
+                        })
+                    } else {
+                        Swal.fire({
+                            icon:'success',
+                            title:'Success!',
+                            html:"<p>" + result.message + "</p>"
+                        })
+                        $('#divTasks').empty()
+                        getTasks()
+                        $('#txtEditName').val('')
+                        $('#txtEditDate').val('')
+                        $('#txtEditLocation').val('')
+                        $('#txtEditInstructions').val('')
+                        $('#txtEditStatus').val('')
+                    }
+                }
+            })
+        }
+
 //on clicking the completed task button,
         function updateStatus(strID, strStatus) {
             $.ajax({
@@ -160,14 +246,29 @@
             })
         }
 
+// run on page load, fill page with existing tasks
+        function getSingleTask(id, callback){
+            $.getJSON("http://localhost:8080/task?id=" + id, function(result){
+                if(result.error){
+                    Swal.fire({
+                        icon:'error',
+                        title:'Error!',
+                        html:"<p>" + result.error + "</p>"
+                    })
+                } else {
+                    callback(result.task)
+                }
+            })
+        }
+
 //on a successful add, insert form into the database
         $('#btnConfirmAdd').on('click',function(){
 
-            strName = $('#txtName').val().trim()
-            strDate = $('#txtDate').val().trim().toString()
-            strLocation = $('#txtLocation').val().trim()
-            strInstructions = $('#txtInstructions').val().trim()
-            strStatus = $('#selStatus').val().trim()
+            let strName = $('#txtName').val().trim()
+            let strDate = $('#txtDate').val().trim().toString()
+            let strLocation = $('#txtLocation').val().trim()
+            let strInstructions = $('#txtInstructions').val().trim()
+            let strStatus = $('#selStatus').val().trim()
 
             $.ajax({
                 url: 'http://localhost:8080/todo',
@@ -187,6 +288,7 @@
                             title:'Success!',
                             html:"<p>" + result.message + "</p>"
                         })
+                        $('#divTasks').empty()
                         getTasks()
                         $('#txtName').val('')
                         $('#txtDate').val('')
@@ -203,24 +305,54 @@
 
 // on click, toggle to the add task form
         $('#btnAddTask').on('click', function(){
-            $('#divTasks').empty()
-            $('#divMain').slideToggle(function(){
+
+            $('#divMain').slideToggle(function(){ 
                 $('#divAdd').slideToggle()
             })
         })
 
-// return button that brings the user back to the task list and reinits the task list
-        $('#btnReturn').on('click', function(){
-            getTasks()
+// on click, toggle to the add task form
+        $('#btnAddReturn').on('click', function(){
             $('#divAdd').slideToggle(function(){
                 $('#divMain').slideToggle()
             })
         })
 
+// on click, toggle to the add task form
+        $('#btnEditReturn').on('click', function(){
+            $('#divEdit').slideToggle(function(){
+                $('#divMain').slideToggle()
+            })
+        })
+
+// on click, toggle to the add task form
+        $('#btnSave').on('click', function(){
+            editTask($(this).attr('value'))
+            $('#divEdit').slideToggle(function(){ 
+                $('#divMain').slideToggle()
+            })
+        })
+
+// attach the click event handler to the dynamically added .btnEdit buttons
+        $(document).on('click', '.btnEdit', function(){
+            let strID = $(this).closest('div.card').attr('id')
+            getSingleTask(strID, function(task){
+                $('#txtEditName').val(task[0].TaskName)
+                $('#txtEditDate').val(task[0].DueDate)
+                $('#txtEditLocation').val(task[0].Location)
+                $('#txtEditInstructions').val(task[0].Instructions)
+                $('#selEditStatus').val(task[0].Status)
+                $('#btnSave').attr('value', task[0].TaskID)
+                $('#divMain').slideToggle(function(){
+                    $('#divEdit').slideToggle()
+                })
+            })
+        })
+
 // attach the click event handler to the dynamically added .btnRemove buttons
         $(document).on('click', '.btnRemove', function(){
-            let strID = $(this).parent().parent().parent().attr('id')
-            $(this).parent().parent().parent().remove()
+            let strID = $(this).closest('div.card').attr('id')
+            $(this).closest('div.card').remove()
             let tasklength = $('#divTasks').children().length
             if(tasklength == 0){
                 $('#divTasks').append("<p>No tasks to do!</p>")
@@ -234,14 +366,23 @@
         $(document).on('click', '.statusCheck', function(){
             let strStatus = ''
             if($(this).attr('checked')){
-                strStatus = 'false'
+                strStatus = 'incomplete'
                 $(this).removeAttr('checked')
             } else {
-                strStatus = 'true'
+                strStatus = 'complete'
                 $(this).attr('checked', true)
             }
             let strID = $(this).closest('div.card').attr('id')
             updateStatus(strID, strStatus)
+        })
+
+// attach the click event handler to the dynamically added .btnDesc buttons
+        $(document).on('click', '.btnDesc', function(){
+            let description = $(this).children('p').attr('value')
+            Swal.fire({
+                title:'Instructions',
+                html:"<p>" + description + "</p>",
+            })
         })
 
 //initialize the task list
