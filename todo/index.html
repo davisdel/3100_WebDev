@@ -160,6 +160,14 @@
                         }
                     })
                 }
+            }).fail(function(){
+                Swal.fire({
+                    icon:'error',
+                    title:'Error!',
+                    html:"<p>Could not connect to database</p>"
+                })
+                $('#divTasks').append("<p>Error pulling from database!</p>")
+                $('#taskCounter').text(0)
             })
         }
 
