@@ -1,2 +1,6 @@
 /nodeExample/node_modules
 /todo/node_modules
+
+/Hello/bin
+/Hello/obj
+Hello/Properties
