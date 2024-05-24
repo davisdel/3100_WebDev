@@ -11,9 +11,9 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 </head>
 <body class="bg-custom">
-    <div class="d-flex vh-100 justify-content-center align-items-center flex-wrap col-12 col-md-10 offset-md-1 col-lg-8 offset-lg-2" id="divContent">
+    <div class="d-flex vh-100 justify-content-center align-items-center flex-wrap col-12 col-md-8 offset-md-2 col-lg-6 offset-lg-3" id="divContent">
         <!-- Main card div -->
-        <div class="card col-12 rounded-3 shadow" id="divMain">
+        <div class="card col-8 rounded-3 shadow" id="divMain">
             <div class="card-header">
                 <div class="row align-items-center">
                     <h3 class="col-auto">Tasks</h3>
@@ -30,7 +30,7 @@
             </div>
         </div>
         <!-- Add task div -->
-        <div class="card col-12 rounded-3 shadow" id="divAdd" style="display:none;">
+        <div class="card col-8 rounded" id="divAdd" style="display:none;">
             <div class="card-header">
                 <h3 class="col-auto">Add Task</h3>
             </div>
@@ -38,14 +38,14 @@
                 <form>
                     <div class="form-floating mb-3">
                         <input class="form-control rounded"  id="txtName" type="text" placeholder="Task name" required>
-                        <label for="txtName">Name<label class="text-danger">*</label></label>
+                        <label for="txtName">Name</label>
                     </div>
                     <div class="form-floating mb-3">
-                        <input class="form-control rounded"  id="txtDate" type="date">
+                        <input class="form-control rounded"  id="txtDate" type="date" required>
                         <label for="txtDate">Due Date</label>
                     </div>
                     <div class="form-floating mb-3">
-                        <input class="form-control rounded"  id="txtLocation" type="text" placeholder="Location">
+                        <input class="form-control rounded"  id="txtLocation" type="text" placeholder="Location" required>
                         <label for="txtLocation">Location</label>
                     </div>
                     <div class="form-floating mb-3">                        
@@ -53,10 +53,10 @@
                             <option value="incomplete" selected>Incomplete</option>
                             <option value="complete">Complete</option>
                         </select>
-                        <label for="selStatus">Status<label class="text-danger">*</label></label>
+                        <label for="selStatus">Status</label>
                     </div>
                     <div class="form-floating mb-3">
-                        <textarea class="form-control"  id="txtInstructions" style="height: 200px;"></textarea>
+                        <textarea class="form-control"  id="txtInstructions" rows="7" placeholder="Write some instructions here..." required></textarea>
                         <label for="txtInstructions">Instructions</label>
                     </div>
                 </form>
@@ -141,7 +141,7 @@
                             <div class='mb-3 card rounded' id='${task.TaskID}'>
                                 <div class='card-body d-flex align-items-center'>
                                     <div class='col-auto'>
-                                        <input class='form-check-input statusCheck mr-5 rounded check-custom' type='checkbox' value='${task.Status}' style='outline:1px solid;'>
+                                        <input class='form-check-input statusCheck mr-5 rounded check-custom' type='checkbox' value='${task.Status}'>
                                     </div>
                                     <button class='col ms-3 btn btn-card rounded btnDesc'>
                                         <h5 class='mb-0 bold'>${task.TaskName}</h5>

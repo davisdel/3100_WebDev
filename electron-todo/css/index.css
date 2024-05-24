@@ -1,0 +1,23 @@
+.btn-custom {
+    background-color:#682ee4;
+    color:white;
+}
+
+.bg-custom {
+    background-color:#eeeef4;
+}
+
+.check-custom:checked {
+    background-color:#682ee4;
+}
+
+.pill-custom {
+    background-color:#eeeef4;
+    color:grey;
+}
+
+.btn-card {
+    background-color:white;
+    outline:none;
+    text-align:left;
+}
